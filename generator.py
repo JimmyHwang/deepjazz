@@ -30,6 +30,7 @@ import lstm
 
 ''' Helper function to sample an index from a probability array '''
 def __sample(a, temperature=1.0):
+    a = np.asarray(a).astype('float64')
     a = np.log(a) / temperature
     a = np.exp(a) / np.sum(np.exp(a))
     return np.argmax(np.random.multinomial(1, a, 1))
