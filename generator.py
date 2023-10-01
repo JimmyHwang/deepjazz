@@ -17,6 +17,7 @@ GPU run command:
 '''
 from __future__ import print_function
 import sys
+import getopt
 
 from music21 import *
 import numpy as np
@@ -174,21 +175,48 @@ def generate(data_fn, out_fn, N_epochs):
 
 ''' Runs generate() -- generating, playing, then storing a musical sequence --
     with the default Metheny file. '''
-def main(args):
-    try:
-        N_epochs = int(args[1])
-    except:
+def main(argv):
+  global VerboseFlag
+  
+  VerboseFlag = False
+  input_file = "original_metheny.mid" # 'And Then I Knew' by Pat Metheny 
+  output_file = "deepjazz_on_metheny"
+  N_epochs = 128
+  
+  try:
+    opts, args = getopt.getopt(argv,"i:o:vh",["input=", "output=", "epochs=", "help"])
+  except getopt.GetoptError:
+    Usage()
+    sys.exit(2)
+  for opt, arg in opts:
+    if opt in ("-h", "--help"):
+      Usage()
+      sys.exit()
+    elif opt in ("--input"):
+      input_file = arg
+    elif opt in ("--output"):
+      output_file = arg
+    elif opt in ("--epochs"):
+      try:
+        N_epochs = int(arg)
+      except:
         N_epochs = 128 # default
-
-    # i/o settings
-    data_fn = 'midi/' + 'original_metheny.mid' # 'And Then I Knew' by Pat Metheny 
-    out_fn = 'midi/' 'deepjazz_on_metheny...' + str(N_epochs)
-    if (N_epochs == 1): out_fn += '_epoch.midi'
-    else:               out_fn += '_epochs.midi'
-
-    generate(data_fn, out_fn, N_epochs)
+    elif opt in ("-v"):
+      VerboseFlag = True
+    else:
+      print (opt, arg)
+    
+  data_fn = 'input/%s' % (input_file)  
+  out_fn = 'output/%s' % (output_file)
+  out_fn = out_fn.replace(".mid", "_%d.mid" % (N_epochs))
+  
+  print("Input file   = %s" % (data_fn))
+  print("Output file  = %s" % (out_fn))
+  print("N_epochs     = %d" % (N_epochs))
+  print("Verbose Flag = %d" % (VerboseFlag))
+  
+  generate(data_fn, out_fn, N_epochs)
 
 ''' If run as script, execute main '''
 if __name__ == '__main__':
-    import sys
-    main(sys.argv)
+    main(sys.argv[1:])
