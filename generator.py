@@ -180,7 +180,7 @@ def main(argv):
   
   VerboseFlag = False
   input_file = "original_metheny.mid" # 'And Then I Knew' by Pat Metheny 
-  output_file = "deepjazz_on_metheny"
+  output_file = "deepjazz_on_metheny.mid"
   N_epochs = 128
   
   try:
